@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2023",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": ".", // 프로젝트 루트 (buff/api)를 기준
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@dto/*": ["../../dto/*"] // buff/dto 폴더를 참조
+    }
+  },
+  "include": ["src/**/*", "../../dto/**/*"], // src와 dto 폴더 포함
+  "exclude": ["node_modules", "dist"] // node_modules, dist 제외
+}
