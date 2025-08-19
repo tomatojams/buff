@@ -27,7 +27,7 @@ CREATE TABLE categories (
                             revoked_at TIMESTAMP
 ) ENGINE=InnoDB;
 
--- 3. restaurants table (added is_takeout_available, luckybox_enabled)
+-- 3. restaurants table (unchanged)
 CREATE TABLE restaurants (
                              id CHAR(36) PRIMARY KEY,
                              name VARCHAR(100) NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE restaurants (
                              FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB;
 
--- 4. addresses table (latitude, longitude nullable for pickup)
+-- 4. addresses table (unchanged)
 CREATE TABLE addresses (
                            id CHAR(36) PRIMARY KEY,
                            user_id CHAR(36) NOT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE coupons (
                          FOREIGN KEY (restaurant_id) REFERENCES restaurants(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB;
 
--- 7. orders table (added order_type, pickup_time, special_request, order_source)
+-- 7. orders table (added pickup_code, pickup_deadline_at, ready_at, picked_up_at; made address_id nullable)
 CREATE TABLE orders (
                         id CHAR(36) PRIMARY KEY,
                         user_id CHAR(36) NOT NULL,
@@ -98,6 +98,10 @@ CREATE TABLE orders (
                         points_used DECIMAL(10, 2) DEFAULT 0.00,
                         points_earned DECIMAL(10, 2) DEFAULT 0.00,
                         order_type ENUM('delivery', 'takeout', 'dine_in') NOT NULL,
+                        pickup_code VARCHAR(10),
+                        pickup_deadline_at TIMESTAMP,
+                        ready_at TIMESTAMP,
+                        picked_up_at TIMESTAMP,
                         pickup_time TIMESTAMP,
                         special_request TEXT,
                         order_source ENUM('app', 'web', 'admin') NOT NULL,
@@ -111,7 +115,7 @@ CREATE TABLE orders (
                         FOREIGN KEY (coupon_id) REFERENCES coupons(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB;
 
--- 8. menus table (added is_luckybox_item, original_price, discounted_price)
+-- 8. menus table (unchanged)
 CREATE TABLE menus (
                        id CHAR(36) PRIMARY KEY,
                        restaurant_id CHAR(36) NOT NULL,
@@ -254,16 +258,17 @@ CREATE TABLE search_histories (
                                   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB;
 
--- 19. order_status_histories table (added changed_by)
+-- 19. order_status_histories table (changed changed_by to changed_by_id with reference to admins)
 CREATE TABLE order_status_histories (
                                         id CHAR(36) PRIMARY KEY,
                                         order_id CHAR(36) NOT NULL,
                                         status ENUM('pending', 'preparing', 'delivering', 'completed', 'cancelled') NOT NULL,
-                                        changed_by ENUM('customer', 'restaurant', 'system') NOT NULL,
+                                        changed_by_id CHAR(36),
                                         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                         revoked_at TIMESTAMP,
-                                        FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE RESTRICT ON UPDATE RESTRICT
+                                        FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+                                        FOREIGN KEY (changed_by_id) REFERENCES admins(id) ON DELETE SET NULL ON UPDATE RESTRICT
 ) ENGINE=InnoDB;
 
 -- 20. reviews table (unchanged)
@@ -296,7 +301,7 @@ CREATE TABLE notifications (
                                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB;
 
--- 22. payments table (added refund_status, refund_amount, payment_gateway)
+-- 22. payments table (unchanged)
 CREATE TABLE payments (
                           id CHAR(36) PRIMARY KEY,
                           order_id CHAR(36) NOT NULL,
@@ -341,7 +346,7 @@ CREATE TABLE events (
                         revoked_at TIMESTAMP
 ) ENGINE=InnoDB;
 
--- 25. luckyboxes table (new table)
+-- 25. luckyboxes table (unchanged)
 CREATE TABLE luckyboxes (
                             id CHAR(36) PRIMARY KEY,
                             restaurant_id CHAR(36) NOT NULL,
@@ -357,7 +362,7 @@ CREATE TABLE luckyboxes (
                             FOREIGN KEY (menu_id) REFERENCES menus(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB;
 
--- 26. admins table (new table)
+-- 26. admins table (unchanged)
 CREATE TABLE admins (
                         id CHAR(36) PRIMARY KEY,
                         restaurant_id CHAR(36),
