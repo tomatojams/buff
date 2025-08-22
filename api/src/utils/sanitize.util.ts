@@ -1,4 +1,4 @@
-import * as sanitizeHtml from "sanitize-html";
+import * as sanitizeHtml from 'sanitize-html';
 
 // Sanitization 설정 타입
 interface SanitizeConfig {
@@ -20,7 +20,7 @@ const strictSanitizeConfig: SanitizeConfig = {
 // 범용 Sanitization 함수
 export function sanitizeInput<T extends Record<string, any>>(
   input: T,
-  fieldConfigs: FieldSanitizeConfig = {}
+  fieldConfigs: FieldSanitizeConfig = {},
 ): T {
   const sanitized: Partial<T> = {};
 
@@ -30,7 +30,7 @@ export function sanitizeInput<T extends Record<string, any>>(
     const config = fieldConfigs[key] || strictSanitizeConfig;
 
     // 값이 문자열이거나 옵셔널 문자열일 경우에만 sanitization
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       sanitized[key] = sanitizeHtml(value, config) as T[typeof key];
     } else {
       sanitized[key] = value; // 문자열이 아니면 그대로 유지

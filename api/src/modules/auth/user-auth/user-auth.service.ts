@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
   Logger,
   UnauthorizedException,
@@ -17,7 +18,7 @@ import { Request, Response } from 'express';
 import * as bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { jwtConstants } from 'src/common/constants/constants';
-import { createPasswordResetContent } from 'src/utils/email.utils';
+// import { createPasswordResetContent } from 'src/utils/email.utils';
 
 interface User {
   id: string;
@@ -153,7 +154,7 @@ export class UserAuthService {
         },
         body: new URLSearchParams({
           grant_type: 'authorization_code',
-          client_id: process.env.KAKAO_CLIENT_ID,
+          client_id: process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY!,
           redirect_uri: oauthDto.redirectUri,
           code: oauthDto.code,
         }),
@@ -418,32 +419,32 @@ export class UserAuthService {
   }
 
   // 비밀번호 찾기
-  async forgotPassword(email: string): Promise<void> {
-    try {
-      const user = await this.knex<User>('users')
-        .where({ email, revoked_at: null })
-        .first();
-      if (!user) {
-        this.logger.warn(`Forgot password failed: email ${email} not found`);
-        throw new UnauthorizedException('등록된 이메일이 아닙니다.');
-      }
-
-      const token = await this.jwtService.signAsync(
-        { id: user.id, email: user.email, purpose: 'password_reset' },
-        { secret: jwtConstants.secret, expiresIn: '1h' },
-      );
-
-      const { subject, content } = createPasswordResetContent(token);
-      await sendEmail(user.email, subject, content);
-      this.logger.verbose(`Password reset email sent to ${user.email}`);
-    } catch (error) {
-      this.logger.error(
-        `Forgot password error for email ${email}: ${error.message}`,
-        error.stack,
-      );
-      throw error;
-    }
-  }
+  // async forgotPassword(email: string): Promise<void> {
+  //   try {
+  //     const user = await this.knex<User>('users')
+  //       .where({ email, revoked_at: null })
+  //       .first();
+  //     if (!user) {
+  //       this.logger.warn(`Forgot password failed: email ${email} not found`);
+  //       throw new UnauthorizedException('등록된 이메일이 아닙니다.');
+  //     }
+  //
+  //     const token = await this.jwtService.signAsync(
+  //       { id: user.id, email: user.email, purpose: 'password_reset' },
+  //       { secret: jwtConstants.secret, expiresIn: '1h' },
+  //     );
+  //
+  //     const { subject, content } = createPasswordResetContent(token);
+  //     await sendEmail(user.email, subject, content);
+  //     this.logger.verbose(`Password reset email sent to ${user.email}`);
+  //   } catch (error) {
+  //     this.logger.error(
+  //       `Forgot password error for email ${email}: ${error.message}`,
+  //       error.stack,
+  //     );
+  //     throw error;
+  //   }
+  // }
 
   // 비밀번호 초기화
   async resetPassword(token: string, password: string): Promise<void> {

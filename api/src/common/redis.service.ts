@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import Redis from "ioredis";
-import config from "src/config";
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import Redis from 'ioredis';
+import config from 'src/config';
 
 /**
  * Redis 데이터베이스와의 연결 및 기본 CRUD 작업을 수행하는 서비스입니다.
@@ -29,8 +29,8 @@ export class RedisService {
    * @param ttl 만료 시간(초)
    */
   async set(key: string, value: any, ttl: number) {
-    const toStore = typeof value === "string" ? value : JSON.stringify(value);
-    await this.redis.set(key, toStore, "EX", ttl);
+    const toStore = typeof value === 'string' ? value : JSON.stringify(value);
+    await this.redis.set(key, toStore, 'EX', ttl);
   }
 
   /**

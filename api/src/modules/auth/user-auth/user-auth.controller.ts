@@ -21,7 +21,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthUser } from 'src/common/decorators/auth-user.decorator';
 import { RolesGuard } from 'src/middleware/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
+// import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { KakaoOAuthDto } from './dto/kakao-oauth.dto';
@@ -29,6 +29,7 @@ import { NaverOAuthDto } from './dto/naver-oauth.dto';
 import { CheckEmailDto } from './dto/check-email.dto';
 import { CheckPhoneDto } from './dto/check-phone.dto';
 import { Request, Response } from 'express';
+import { Role } from 'src/modules/users/entity/user.entity';
 
 @Controller('auth/user')
 @ApiTags('UserAuth')
@@ -44,15 +45,7 @@ export class UserAuthController {
   @ApiBody({ type: UserSignupDto })
   @UsePipes(new ZodValidationPipe(UserSignupDto.schema))
   async signup(@Body() signUpDto: UserSignupDto): Promise<{ id: string }> {
-    try {
-      return await this.authService.signup(signUpDto);
-    } catch (error) {
-      this.logger.error(
-        `Signup failed for email ${signUpDto.email}: ${error.message}`,
-        error.stack,
-      );
-      throw error;
-    }
+    return await this.authService.signup(signUpDto);
   }
 
   // 이메일 로그인
@@ -64,15 +57,7 @@ export class UserAuthController {
     @Body(new ZodValidationPipe(UserSigninDto.schema)) logInDto: UserSigninDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ accessToken: string; email: string }> {
-    try {
-      return await this.authService.login(logInDto, res);
-    } catch (error) {
-      this.logger.error(
-        `Login failed for email ${logInDto.email}: ${error.message}`,
-        error.stack,
-      );
-      throw error;
-    }
+    return await this.authService.login(logInDto, res);
   }
 
   // 카카오 로그인
@@ -85,12 +70,7 @@ export class UserAuthController {
     @Body() dto: KakaoOAuthDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ accessToken: string }> {
-    try {
-      return await this.authService.kakaoLogin(dto, res);
-    } catch (error) {
-      this.logger.error(`Kakao login failed: ${error.message}`, error.stack);
-      throw error;
-    }
+    return await this.authService.kakaoLogin(dto, res);
   }
 
   // 네이버 로그인
@@ -103,21 +83,16 @@ export class UserAuthController {
     @Body() dto: NaverOAuthDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ accessToken: string }> {
-    try {
-      return await this.authService.naverLogin(dto, res);
-    } catch (error) {
-      this.logger.error(`Naver login failed: ${error.message}`, error.stack);
-      throw error;
-    }
+    return await this.authService.naverLogin(dto, res);
   }
 
   // 토큰 조회
   @Get('check-login')
   @ApiOperation({ summary: '로그인 상태 확인' })
   @UseGuards(AuthGuard('jwt'))
-  @Roles('user')
+  @Roles(Role.USER)
   @ApiBearerAuth('access-token')
-  async checkLogin(): Promise<string> {
+  checkLogin(): string {
     this.logger.verbose('Access token is valid', 'UserAuthController');
     return 'token OK';
   }
@@ -126,21 +101,13 @@ export class UserAuthController {
   @Post('logout')
   @ApiOperation({ summary: '로그아웃' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('user')
+  @Roles(Role.USER)
   @ApiBearerAuth('access-token')
   async logout(
     @AuthUser() user: { id: string; email: string },
     @Res({ passthrough: true }) res: Response,
   ): Promise<void> {
-    try {
-      await this.authService.logout(user, res);
-    } catch (error) {
-      this.logger.error(
-        `Logout failed for user ${user.id}: ${error.message}`,
-        error.stack,
-      );
-      throw error;
-    }
+    await this.authService.logout(user, res);
   }
 
   // 토큰 갱신
@@ -157,12 +124,7 @@ export class UserAuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ accessToken: string }> {
-    try {
-      return await this.authService.refreshAccessToken(body, req, res);
-    } catch (error) {
-      this.logger.error(`Token refresh failed: ${error.message}`, error.stack);
-      throw error;
-    }
+    return await this.authService.refreshAccessToken(body, req, res);
   }
 
   // 이메일 중복 체크
@@ -192,27 +154,19 @@ export class UserAuthController {
   }
 
   // 비밀번호 찾기 (이메일로 재설정 링크 전송)
-  @Post('forgot-password')
-  @IsPublic()
-  @ApiOperation({
-    summary: '비밀번호 찾기',
-    description: '비밀번호 재설정 링크를 이메일로 전송합니다.',
-  })
-  @ApiBody({ type: ForgotPasswordDto })
-  async forgotPassword(
-    @Body(new ZodValidationPipe(ForgotPasswordDto.schema))
-    body: ForgotPasswordDto,
-  ): Promise<void> {
-    try {
-      await this.authService.forgotPassword(body.email);
-    } catch (error) {
-      this.logger.error(
-        `Forgot password failed for email ${body.email}: ${error.message}`,
-        error.stack,
-      );
-      throw error;
-    }
-  }
+  // @Post('forgot-password')
+  // @IsPublic()
+  // @ApiOperation({
+  //   summary: '비밀번호 찾기',
+  //   description: '비밀번호 재설정 링크를 이메일로 전송합니다.',
+  // })
+  // @ApiBody({ type: ForgotPasswordDto })
+  // async forgotPassword(
+  //   @Body(new ZodValidationPipe(ForgotPasswordDto.schema))
+  //   body: ForgotPasswordDto,
+  // ): Promise<void> {
+  //   await this.authService.forgotPassword(body.email);
+  // }
 
   // 비밀번호 초기화
   @Post('reset-password')
@@ -226,12 +180,7 @@ export class UserAuthController {
     @Body(new ZodValidationPipe(ResetPasswordDto.schema))
     body: ResetPasswordDto,
   ): Promise<{ success: boolean }> {
-    try {
-      await this.authService.resetPassword(body.token, body.password);
-      return { success: true };
-    } catch (error) {
-      this.logger.error(`Password reset failed: ${error.message}`, error.stack);
-      throw error;
-    }
+    await this.authService.resetPassword(body.token, body.password);
+    return { success: true };
   }
 }

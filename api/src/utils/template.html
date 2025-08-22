@@ -1,0 +1,82 @@
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${title}</title>
+  <style>
+    /* 기본 리셋 및 텍스트 스타일 */
+    body, table, td, a {
+      font-family: 'Pretendard', sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #F5F5F5; /* 연한 회색 배경 */
+    }
+    h1, h2, h3, h4, h5, h6, p {
+      margin: 0;
+      padding: 0;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#F5F5F5;">
+  <!-- 전체 컨테이너 테이블 -->
+
+    <!-- 헤더 영역 -->
+    <tr>
+      <td align="center" bgcolor="#3FA0EF" style="padding: 40px 0 30px 0 ;">
+        <h1 style="color: #ffffff; font-size: 28px; margin: 0;">buff</h1>
+      </td>
+    </tr>
+
+    <!-- 본문 컨테이너 -->
+    <tr>
+      <td style="padding: 30px 15px 30px 15px;" align="center">
+        <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color:#ffffff; border-radius:6px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+          <tr>
+            <td style="padding: 30px;">
+              <!-- 제목 -->
+              <h2 style="font-size: 20x; margin-bottom: 16px; color:#333;">${title}</h2>
+              <!-- 내용 -->
+              <p style="font-size: 16px; line-height: 1.5; color: #555; margin-bottom: 24px;">
+                ${content}
+              </p>
+
+              <!-- 버튼 -->
+              <table border="0" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
+                <tr>
+                  <td align="center" bgcolor="#3FA0EF" style="border-radius: 4px;">
+                    <a href="${buttonLink}" target="_blank" 
+                       style="display:inline-block; padding:12px 24px; color:#ffffff; font-size:16px; font-weight:bold;">
+                      ${buttonText}
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- 버튼 아래 링크 텍스트 -->
+              <p style="font-size: 14px; color: #999; margin-bottom: 0;">
+                버튼이 눌리지 않을 경우, 아래 링크를 클릭하거나 브라우저에 복사해 붙여넣으세요.
+              </p>
+              <p style="font-size: 14px; color: #3FA0EF; word-break: break-all;">
+                <a href="${buttonLink}" style="color: #3FA0EF;">${buttonLink}</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <!-- 푸터 영역 -->
+    <tr>
+      <td align="center" style="padding: 20px; font-size: 12px; color: #666;">
+        All rights reserved. ⓒ H+S Corp.
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
